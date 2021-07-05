@@ -29,6 +29,11 @@ class FairPoSCalculatorTest extends PropSpec with Matchers {
   val blockDelaySeconds = 60
   val defaultBaseTarget = 100L
 
+  property("Base target should not be 0") {
+    val baseTarget = FairPoSCalculator(60, 0).calculateBaseTarget(60, 1, 1, 2, Some(1), 3)
+    baseTarget shouldBe 1
+  }
+
   property("Correct consensus parameters distribution of blocks generated with FairPoS") {
 
     val miners = mkMiners
