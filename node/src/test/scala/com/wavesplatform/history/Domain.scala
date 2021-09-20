@@ -224,6 +224,17 @@ case class Domain(db: DB, blockchainUpdater: BlockchainUpdaterImpl, levelDBWrite
 
     CommonBlocksApi(blockchainUpdater, loadBlockMetaAt(db, blockchainUpdater), loadBlockInfoAt(db, blockchainUpdater))
   }
+
+  //noinspection ScalaStyle
+  object helpers {
+    def creditWaves(address: Address, amount: Long = 10_0000_0000): Unit = {
+      appendBlock(TxHelpers.genesis(address, amount))
+    }
+
+    def creditWavesToDefaultSigner(amount: Long = 10_0000_0000): Unit = {
+      creditWaves(TxHelpers.defaultAddress, amount)
+    }
+  }
 }
 
 object Domain {

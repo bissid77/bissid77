@@ -3,24 +3,24 @@ package com.wavesplatform.db
 import java.nio.file.Files
 
 import cats.Monoid
+import com.wavesplatform.{NTPTime, TestHelpers}
 import com.wavesplatform.account.Address
 import com.wavesplatform.block.Block
 import com.wavesplatform.common.utils.EitherExt2
-import com.wavesplatform.database.{LevelDBFactory, LevelDBWriter, TestStorageFactory, loadActiveLeases}
+import com.wavesplatform.database.{loadActiveLeases, LevelDBFactory, LevelDBWriter, TestStorageFactory}
 import com.wavesplatform.events.BlockchainUpdateTriggers
 import com.wavesplatform.features.{BlockchainFeature, BlockchainFeatures}
 import com.wavesplatform.history.Domain
 import com.wavesplatform.lagonaki.mocks.TestBlock
 import com.wavesplatform.lang.ValidationError
 import com.wavesplatform.mining.MiningConstraint
-import com.wavesplatform.settings.{BlockchainSettings, FunctionalitySettings, TestSettings, WavesSettings, loadConfig, TestFunctionalitySettings => TFS}
-import com.wavesplatform.state.diffs.{BlockDiffer, produce}
+import com.wavesplatform.settings.{loadConfig, BlockchainSettings, FunctionalitySettings, TestSettings, WavesSettings, TestFunctionalitySettings => TFS}
+import com.wavesplatform.state.{Blockchain, BlockchainUpdaterImpl, Diff}
+import com.wavesplatform.state.diffs.{produce, BlockDiffer}
 import com.wavesplatform.state.reader.CompositeBlockchain
 import com.wavesplatform.state.utils.TestLevelDB
-import com.wavesplatform.state.{Blockchain, BlockchainUpdaterImpl, Diff}
-import com.wavesplatform.transaction.smart.script.trace.TracedResult
 import com.wavesplatform.transaction.{Asset, Transaction}
-import com.wavesplatform.{NTPTime, TestHelpers}
+import com.wavesplatform.transaction.smart.script.trace.TracedResult
 import monix.reactive.Observer
 import monix.reactive.subjects.{PublishSubject, Subject}
 import org.iq80.leveldb.{DB, Options}
@@ -192,6 +192,8 @@ trait WithDomain extends WithState { _: Suite =>
       BlockchainFeatures.SmartAssets,
       BlockchainFeatures.BlockV5
     )
+
+    val RideV4WithRewards = RideV4.addFeatures(BlockchainFeatures.BlockReward)
 
     val RideV5 = RideV4.addFeatures(BlockchainFeatures.SynchronousCalls)
   }

@@ -13,7 +13,7 @@ import com.wavesplatform.state.patch._
 import com.wavesplatform.state.reader.CompositeBlockchain
 import com.wavesplatform.transaction.{Asset, Transaction}
 import com.wavesplatform.transaction.Asset.{IssuedAsset, Waves}
-import com.wavesplatform.transaction.TxValidationError.{ActivationError, _}
+import com.wavesplatform.transaction.TxValidationError._
 import com.wavesplatform.transaction.smart.script.trace.TracedResult
 import com.wavesplatform.utils.ScorexLogging
 
@@ -156,7 +156,7 @@ object BlockDiffer extends ScorexLogging {
         patch.lift(CompositeBlockchain(blockchain, prevDiff)).fold(prevDiff)(prevDiff |+| _)
     }
 
-    txs
+    val result = txs
       .foldLeft(TracedResult(Result(initDiffWithPatches, 0L, 0L, initConstraint, DetailedDiff(initDiffWithPatches, Nil)).asRight[ValidationError])) {
         case (acc @ TracedResult(Left(_), _, _), _) => acc
         case (TracedResult(Right(Result(currDiff, carryFee, currTotalFee, currConstraint, DetailedDiff(parentDiff, txDiffs))), _, _), tx) =>
@@ -193,5 +193,10 @@ object BlockDiffer extends ScorexLogging {
             }
           }
       }
+
+    for {
+      result <- result
+      _      <- CommonValidation.disallowNegativeBalances(blockchain, result.diff)
+    } yield result
   }
 }
