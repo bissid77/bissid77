@@ -25,12 +25,12 @@ object DiffToStateApplier {
       val bs = Map.newBuilder[Asset, Long]
 
       if (portfolioDiff.balance != 0) {
-        bs += Waves -> math.addExact(blockchain.balance(address, Waves), portfolioDiff.balance).ensuring(_ > 0)
+        bs += Waves -> math.addExact(blockchain.balance(address, Waves), portfolioDiff.balance).ensuring(_ >= 0)
       }
 
       portfolioDiff.assets.collect {
         case (asset, delta) if delta != 0 =>
-          bs += asset -> math.addExact(blockchain.balance(address, asset), delta).ensuring(_ > 0)
+          bs += asset -> math.addExact(blockchain.balance(address, asset), delta).ensuring(_ >= 0)
       }
 
       balances += address -> bs.result()
