@@ -101,8 +101,8 @@ class EthRpcRoute(blockchain: Blockchain, transactionsApi: CommonTransactionsApi
                   "blockNumber"       -> toHexString(BigInteger.valueOf(height)),
                   "from"              -> toHexString(new Array[Byte](20)),
                   "to"                -> toHexString(new Array[Byte](20)),
-                  "cumulativeGasUsed" -> toHexString(BigInteger.valueOf(500000)),
-                  "gasUsed"           -> toHexString(BigInteger.valueOf(500000)),
+                  "cumulativeGasUsed" -> toHexString(BigInteger.valueOf(tx.fee)),
+                  "gasUsed"           -> toHexString(BigInteger.valueOf(tx.fee)),
                   "contractAddress"   -> JsNull,
                   "logs"              -> Json.arr(),
                   "logsBloom"         -> toHexString(new Array[Byte](32))
