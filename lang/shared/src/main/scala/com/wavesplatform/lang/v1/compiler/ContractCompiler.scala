@@ -379,11 +379,12 @@ object ContractCompiler {
       input: String,
       ctx: CompilerContext,
       version: StdLibVersion,
+      lastInsertedCharPos: Option[Int] = None,
       needCompaction: Boolean = false,
       removeUnusedCode: Boolean = false,
       saveExprContext: Boolean = true
   ): Either[String, (Option[DApp], Expressions.DAPP, Iterable[CompilationError])] = {
-    Parser.parseDAPPWithErrorRecovery(input) match {
+    Parser.parseDAPPWithErrorRecovery(input, lastInsertedCharPos) match {
       case Right((parseResult, removedCharPosOpt)) =>
         compileContract(ctx, parseResult, version, needCompaction, removeUnusedCode, ScriptResultSource.CallableFunction, saveExprContext)
           .run(ctx)
