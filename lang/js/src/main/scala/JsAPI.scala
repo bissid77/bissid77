@@ -128,7 +128,7 @@ object JsAPI {
   def parseAndCompile(
       input: String,
       estimatorVersion: Int,
-      lastInsertedCharPos: Option[Int] = None,
+      lastInsertedCharPos: js.UndefOr[Int] = None.orUndefined,
       needCompaction: Boolean = false,
       removeUnusedCode: Boolean = false,
       libraries: Dictionary[String] = Dictionary.empty
@@ -146,7 +146,7 @@ object JsAPI {
         ds,
         linkedInput,
         ScriptEstimator.all.toIndexedSeq(estimatorVer - 1),
-        lastInsertedCharPos,
+        lastInsertedCharPos.toOption,
         needCompaction,
         removeUnusedCode
       )
